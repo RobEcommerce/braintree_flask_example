@@ -32,6 +32,11 @@ def new_checkout():
     client_token = generate_client_token()
     return render_template('checkouts/new.html', client_token=client_token)
 
+@app.route('/paylater', methods=['GET'])
+def new_paylater():
+    client_token = generate_client_token()
+    return render_template('checkouts/paylater.html', client_token=client_token)
+
 @app.route('/checkouts/<transaction_id>', methods=['GET'])
 def show_checkout(transaction_id):
     transaction = find_transaction(transaction_id)

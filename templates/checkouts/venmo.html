@@ -1,0 +1,113 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="wrapper">
+  <div class="checkout container">
+
+    <header>
+      <h1>Hi, <br>Let's test a PayLater transaction</h1>
+      <p>
+        Make a test payment PayLater Sandbox
+      </p>
+    </header>
+
+    <form id="payment-form" method="post" action="/checkouts">
+        <section>
+            <div class="pp">
+                Venmo stub
+                <div id="venmo-button"></div>
+            </div>
+          
+        </section>
+  
+        <input type="hidden" id="nonce" name="payment_method_nonce" />
+        <button class="button" type="submit" id="submit-button"><span>Diabeetus</span></button>
+      </form>
+
+    <div id="paylater-button"></div>
+  </div>
+</div>
+<script src="https://js.braintreegateway.com/web/3.79.1/js/client.min.js"></script>
+<script src= "https://js.braintreegateway.com/web/3.79.1/js/paypal-checkout.min.js"></script>
+<script>
+    var client_token = '{{ client_token }}';
+  // Create a client.
+braintree.client.create({
+  authorization: client_token
+}, function (clientErr, clientInstance) {
+
+  // Stop if there was a problem creating the client.
+  // This could happen if there is a network error or if the authorization
+  // is invalid.
+  if (clientErr) {
+    console.error('Error creating client:', clientErr);
+    return;
+  }
+
+  // Create a PayPal Checkout component.
+  braintree.paypalCheckout.create({
+    client: clientInstance
+  }, function (paypalCheckoutErr, paypalCheckoutInstance) {
+    paypalCheckoutInstance.loadPayPalSDK({
+        components: 'buttons,messages',
+        currency: 'USD',
+        dataAttributes: {
+            amount: '10.00'
+            }
+    }, function () {
+      paypal.Buttons({
+        fundingSource: paypal.FUNDING.PAYLATER,
+
+        createOrder: function () {
+          return paypalCheckoutInstance.createPayment({
+            flow: 'checkout', // Required
+            amount: 10.00, // Required
+            currency: 'USD', // Required, must match the currency passed in with loadPayPalSDK
+            requestBillingAgreement: true, // Required
+            billingAgreementDetails: {
+              description: 'Description of the billng agreement to display to the customer'
+            },
+
+            intent: 'capture', // Must match the intent passed in with loadPayPalSDK
+
+            enableShippingAddress: true,
+            shippingAddressEditable: false,
+            shippingAddressOverride: {
+              recipientName: 'Scruff McGruff',
+              line1: '1234 Main St.',
+              line2: 'Unit 1',
+              city: 'Chicago',
+              countryCode: 'US',
+              postalCode: '60652',
+              state: 'IL',
+              phone: '123.456.7890'
+            }
+          });
+        },
+
+        onApprove: function (data, actions) {
+          return paypalCheckoutInstance.tokenizePayment(data, function (err, payload) {
+            // Submit `payload.nonce` to your server
+          });
+        },
+
+        onCancel: function (data) {
+          console.log('PayPal payment cancelled', JSON.stringify(data, 0, 2));
+        },
+
+        onError: function (err) {
+          console.error('PayPal error', err);
+        }
+      }).render('#paylater-button').then(function () {
+        // The PayPal button will be rendered in an html element with the ID
+        // `paylater-button`. This function will be called when the PayPal button
+        // is set up and ready to be used
+      });
+
+    });
+
+  });
+
+});
+</script>
+{% endblock %}

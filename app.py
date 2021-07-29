@@ -37,6 +37,16 @@ def new_paylater():
     client_token = generate_client_token()
     return render_template('checkouts/paylater.html', client_token=client_token)
 
+@app.route('/venmo', methods=['GET'])
+def new_venmo():
+    client_token = generate_client_token()
+    return render_template('checkouts/venmo.html', client_token=client_token)
+
+@app.route('/src', methods=['GET'])
+def new_paylater():
+    client_token = generate_client_token()
+    return render_template('checkouts/src.html', client_token=client_token)
+
 @app.route('/checkouts/<transaction_id>', methods=['GET'])
 def show_checkout(transaction_id):
     transaction = find_transaction(transaction_id)

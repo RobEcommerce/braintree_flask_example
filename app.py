@@ -43,7 +43,7 @@ def new_venmo():
     return render_template('checkouts/venmo.html', client_token=client_token)
 
 @app.route('/src', methods=['GET'])
-def new_paylater():
+def new_src():
     client_token = generate_client_token()
     return render_template('checkouts/src.html', client_token=client_token)
 

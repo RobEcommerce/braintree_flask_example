@@ -33,7 +33,7 @@ def new_checkout():
     return render_template('checkouts/new.html', client_token=client_token)
 
 @app.route('/checkouts/hf', methods=['GET'])
-def new_paylater():
+def new_checkout():
     client_token = generate_client_token()
     return render_template('checkouts/hf.html', client_token=client_token)
 

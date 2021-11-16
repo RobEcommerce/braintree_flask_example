@@ -22,12 +22,13 @@
         <div id="expiration-date"></div>
   
         <input type="submit" value="Pay" disabled />
-      </form>
+    </form>
   
       <script src="https://js.braintreegateway.com/web/3.83.0/js/client.min.js"></script>
       <script src="https://js.braintreegateway.com/web/3.83.0/js/hosted-fields.min.js"></script>
       <script>
         var form = document.querySelector('#payment-form');
+        var client_token = '{{ client_token }}';
         var submit = document.querySelector('input[type="submit"]');
   
         braintree.client.create({
